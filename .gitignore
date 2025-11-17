@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.log
+*.tmp
+
+# Chrome extension development
+*.pem
+*.crx
+.web-extension-id
+
+# Node modules (if we add any later)
+node_modules/
+
+# Environment files
+.env
+.env.local

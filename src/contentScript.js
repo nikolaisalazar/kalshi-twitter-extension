@@ -223,7 +223,7 @@ function extractCompleteTweetData(tweetElement) {
   if (mainText) {
     textParts.push(mainText);
   }
-
+  ``
   if (quoteText) {
     textParts.push(quoteText);
   }

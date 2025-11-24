@@ -499,9 +499,9 @@ function extractTweetData() {
 }
 
 /**
- * Process the current tweet (FINAL - Phase 1 Complete)
+ * Process the current tweet (Phase 2 - WITH MARKET MATCHING)
  */
-function processTweet() {
+async function processTweet() {
   debugLog('Processing tweet...');
 
   if (!isTweetDetailPage()) {
@@ -539,9 +539,98 @@ function processTweet() {
     console.log('🔍 Search Text (for Kalshi matching):', tweetData.searchText);
     console.log('='.repeat(70));
 
-    // TODO Phase 2: Match with Kalshi markets and display UI
+    // NEW: Phase 2 - Match with Kalshi markets
+    debugLog('Attempting to match with Kalshi markets...');
+
+    try {
+      // Get markets (from cache or API)
+      const markets = await getMarkets();
+
+      if (markets.length === 0) {
+        debugLog('⚠️ No markets available');
+        return;
+      }
+
+      debugLog(`Searching ${markets.length} markets for match...`);
+
+      // Prioritize quote tweet text if available
+      let primaryText = tweetData.searchText;
+      if (tweetData.quoteText) {
+        debugLog('Quote tweet detected - prioritizing quoted content');
+        primaryText = tweetData.quoteText + ' ' + tweetData.mainText;
+      }
+
+      // Find best matching market
+      const match = findBestMatch(primaryText, markets);
+
+      if (match) {
+        console.log('='.repeat(70));
+        console.log('💰 MARKET MATCH FOUND');
+        console.log('='.repeat(70));
+        console.log('Tweet:', tweetData.mainText.substring(0, 80) + '...');
+        console.log('Market:', match.market.title);
+        console.log('Ticker:', match.market.ticker);
+        console.log('Category:', match.market.category || 'None');
+        console.log('Match Score:', (match.score * 100).toFixed(0) + '%');
+        console.log('Yes Bid:', match.market.yes_bid + '¢');
+        console.log('No Bid:', match.market.no_bid + '¢');
+        console.log('Keywords matched:', match.keywords.slice(0, 5).join(', '));
+        console.log('='.repeat(70));
+
+        // TODO Phase 3: Display this in UI panel
+      } else {
+        debugLog('No relevant market found for this tweet');
+      }
+    } catch (error) {
+      console.error('Error matching markets:', error);
+    }
   } else {
     debugLog('No tweet content extracted');
+  }
+}
+
+// ============================================================================
+// PHASE 2: MARKET CACHING & FETCHING
+// ============================================================================
+
+// Global cache for markets (to avoid fetching on every tweet)
+let marketsCache = null;
+let cacheTimestamp = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Get markets from cache or fetch fresh data
+ */
+async function getMarkets() {
+  const now = Date.now();
+
+  // Return cached data if still fresh
+  if (marketsCache && cacheTimestamp && (now - cacheTimestamp < CACHE_DURATION)) {
+    debugLog('Using cached markets data');
+    return marketsCache;
+  }
+
+  // Fetch fresh data
+  debugLog('Fetching fresh markets data...');
+
+  try {
+    const markets = await fetchOpenMarkets({ limit: 200 });
+
+    if (markets && markets.length > 0) {
+      // Update cache
+      marketsCache = markets;
+      cacheTimestamp = now;
+      debugLog(`Cached ${markets.length} markets`);
+      return markets;
+    } else {
+      debugLog('API returned no markets');
+      // Return stale cache if available
+      return marketsCache || [];
+    }
+  } catch (error) {
+    console.error('Failed to fetch markets:', error);
+    // Return stale cache if available
+    return marketsCache || [];
   }
 }
 

@@ -1,220 +1,189 @@
-# Kalshi Twitter Extension
+# Kalshi Market Insights for Twitter
 
-A Chrome extension that enriches Twitter/X with real-time Kalshi prediction market data. The extension analyzes tweet content and displays relevant prediction market information alongside tweets.
+A Chrome extension that displays Kalshi prediction market data alongside relevant tweets in real-time.
 
 ## 🎯 Project Status
 
-**Current Phase:** Phase 1 Complete ✅  
-**Next Phase:** Phase 2 - Kalshi API Integration (In Progress)
+**Current Phase:** Phase 2 Complete ✅  
+**Next Phase:** Phase 3 - UI Integration
 
-### Phase 1: Project Setup & Foundation ✅
-- [x] Chrome extension structure (Manifest V3)
-- [x] Tweet detection and text extraction
-- [x] Deep thread navigation support
-- [x] Quote tweet detection and extraction
-- [x] Image alt text extraction
-- [x] Intelligent content prioritization for market matching
+### Completed Phases
 
-### Phase 2: Kalshi API Integration 🔄
-- [ ] Kalshi API connection setup
-- [ ] Market data fetching
-- [ ] Keyword-based market matching algorithm
-- [ ] Tweet-to-market correlation logic
+**Phase 1: Foundation ✅**
+- Chrome extension structure (Manifest V3)
+- Tweet detection with scoring algorithm
+- Quote tweet extraction
+- Image alt text extraction
+- Deep thread navigation support
 
-### Phase 3: UI & Display ⏳
-- [ ] Design UI overlay for market data
-- [ ] Inject market information into Twitter interface
-- [ ] Add direct links to Kalshi for trading
-- [ ] Styling and responsive design
+**Phase 2: API Integration ✅**
+- Kalshi API connection via background script
+- 740+ non-sports markets fetched from /events endpoint
+- Keyword-based matching algorithm (trigrams, bigrams, words)
+- Category detection (Politics, Economics, Climate, etc.)
+- Market caching (5-minute TTL)
+- Quote tweet prioritization in matching
+
+### Phase 3: UI Integration 🔄
+- Design market data overlay panel
+- Style to match Twitter's interface
+- Add Kalshi trading links
+- Handle "no match" states gracefully
 
 ## 🚀 Features
 
-### Current Features (Phase 1)
-- **Smart Tweet Detection**: Accurately identifies the focused tweet even in complex thread structures
-- **Quote Tweet Support**: Extracts text from both main tweets and quoted tweets
-- **Image Alt Text**: Reads accessibility descriptions from images
-- **Thread Navigation**: Works correctly with replies, threads, and nested conversations
-- **Comprehensive Logging**: Detailed debug output for development and troubleshooting
+### Current Functionality
+- **Smart Tweet Detection**: Accurately identifies tweets in complex thread structures
+- **Comprehensive Text Extraction**: Main tweets, quote tweets, and image alt text
+- **Market Matching**: Finds relevant Kalshi prediction markets for tweet content
+- **Category Filtering**: Focuses on Politics, Economics, Climate, and other non-sports markets
+- **Intelligent Caching**: Reduces API calls with 5-minute market cache
+- **Debug Logging**: Detailed console output for development
 
-### Planned Features (Phase 2+)
-- Real-time Kalshi market data integration
-- Automatic market matching based on tweet content
-- One-click access to relevant prediction markets
-- Live probability updates
-- OCR for text in images (optional)
+### Coming Soon (Phase 3)
+- Visual market data panel on Twitter
+- Real-time probability display
+- One-click trading links
+- Professional styling
 
 ## 📦 Installation (Development Mode)
-
-### Prerequisites
-- Google Chrome browser
-- Git (for cloning the repository)
 
 ### Steps
 
 1. **Clone the repository:**
 ```bash
-   git clone https://github.com/YOUR_USERNAME/kalshi-twitter-extension.git
-   cd kalshi-twitter-extension
+git clone https://github.com/nikolaisalazar/kalshi-twitter-extension.git
+cd kalshi-twitter-extension
 ```
 
-2. **Open Chrome and navigate to extensions:**
-   - Type `chrome://extensions/` in the address bar
-   - Or: Menu (⋮) → Extensions → Manage Extensions
-
-3. **Enable Developer Mode:**
-   - Toggle the "Developer mode" switch in the top-right corner
-
-4. **Load the extension:**
+2. **Load in Chrome:**
+   - Navigate to `chrome://extensions/`
+   - Enable "Developer mode" (top-right toggle)
    - Click "Load unpacked"
    - Select the `kalshi-twitter-extension` folder
-   - The extension should now appear in your extensions list
 
-5. **Verify installation:**
-   - The extension icon should appear in your Chrome toolbar
-   - Visit any tweet on Twitter/X and open DevTools Console (F12)
-   - You should see: `[Kalshi Extension] Content script loaded`
+3. **Verify installation:**
+   - Visit any tweet on Twitter/X
+   - Open DevTools Console (F12)
+   - Look for: `Kalshi Twitter Extension - Content script loaded`
 
 ## 🛠️ Project Structure
 ```
 kalshi-twitter-extension/
-├── icons/                      # Extension icons
-│   ├── icon16.png             # 16x16 toolbar icon
-│   ├── icon48.png             # 48x48 extension management
-│   └── icon128.png            # 128x128 Chrome Web Store
-├── src/                        # Source code
-│   ├── background.js          # Background service worker
-│   └── contentScript.js       # Main content script (runs on Twitter)
-├── manifest.json              # Extension configuration (Manifest V3)
-├── README.md                  # This file
-└── .gitignore                 # Git ignore rules
+├── icons/                  # Extension icons (16x16, 48x48, 128x128)
+├── src/
+│   ├── background.js      # Background service worker (API calls)
+│   ├── contentScript.js   # Main content script (tweet detection)
+│   ├── kalshiAPI.js       # API communication layer
+│   ├── marketMatcher.js   # Matching algorithm
+│   └── displayFormatter.js # Data formatting utilities
+├── manifest.json          # Extension configuration (Manifest V3)
+└── README.md
 ```
 
 ## 🧪 Testing
 
-### Manual Testing
+### Current Testing Method
 
-1. **Navigate to Twitter/X** (twitter.com or x.com)
-2. **Click on any tweet** to view its detail page
-3. **Open Chrome DevTools** (F12 or Right-click → Inspect)
-4. **Go to the Console tab**
-5. **Look for extraction output:**
+1. Navigate to Twitter/X
+2. Click on any tweet
+3. Open DevTools Console (F12)
+4. Look for extraction and matching output:
 ```
 ======================================================================
 🐦 TWEET EXTRACTED
 ======================================================================
-ID: 1234567890
-Username: someuser
-URL: https://twitter.com/someuser/status/1234567890
-----------------------------------------------------------------------
-📝 Main Text: Tweet content here
-----------------------------------------------------------------------
-🔍 Search Text (for Kalshi matching): Tweet content here
+[... tweet data ...]
 ======================================================================
+[Kalshi Extension] Attempting to match with Kalshi markets...
+[Kalshi Extension] Cached 740 markets
+[Kalshi Extension] Searching 740 markets for match...
 ```
 
-### Test Scenarios
-
-- ✅ Regular text tweets
-- ✅ Tweets in deep threads (3+ levels)
-- ✅ Quote tweets
-- ✅ Tweets with images (with alt text)
-- ✅ Combination: Quote tweet + image
+### Test Cases
+- ✅ Regular tweets
+- ✅ Quote tweets (prioritized in matching)
+- ✅ Deep threads (3+ reply levels)
+- ✅ Tweets with images
+- ✅ Political tweets → Politics markets
+- ✅ Climate tweets → Climate markets
+- ✅ Elon Musk/Mars tweets → matched successfully
 
 ## 💻 Development
 
 ### Tech Stack
-- **JavaScript (ES6+)**: Core extension logic
-- **Chrome Extension API**: Manifest V3
-- **Twitter/X DOM**: Content extraction via selectors
-- **Kalshi API**: Market data (Phase 2)
+- **JavaScript ES6+**: Core logic
+- **Chrome Extension Manifest V3**: Modern extension architecture
+- **Kalshi API**: Real-time prediction market data
+- **Twitter/X DOM**: Content extraction
 
-### Key Files
+### Key Components
 
-**`manifest.json`**: Defines extension configuration, permissions, and scripts
-- Declares content scripts for Twitter/X domains
-- Sets permissions for Kalshi API access
-- Configures background service worker
+**`contentScript.js`**: Tweet detection and extraction
+- Sophisticated scoring system for tweet identification
+- Quote tweet and image text extraction
+- Market matching integration
 
-**`src/contentScript.js`**: Main logic that runs on Twitter pages
-- Tweet detection using scoring system
-- Text extraction from tweets, quotes, and images
-- URL change detection for SPA navigation
-- Comprehensive debug logging
+**`background.js`**: API request handler
+- Fetches markets via /events endpoint
+- Handles CORS restrictions
+- Implements retry logic and rate limiting
 
-**`src/background.js`**: Background service worker
-- Handles extension lifecycle events
-- Message passing between components
-- Future: API call management and caching
+**`kalshiAPI.js`**: Message passing to background script
+
+**`marketMatcher.js`**: Matching algorithm
+- Keyword extraction (trigrams, bigrams, single words)
+- Category detection
+- Configurable match threshold (currently 15%)
 
 ### Debug Mode
 
-Debug logging is enabled by default in `contentScript.js`:
+Enable detailed logging in `contentScript.js`:
 ```javascript
 const CONFIG = {
-  DEBUG: true,  // Set to false to disable debug logs
-  // ...
+  DEBUG: true,  // Set to false to disable
 };
 ```
 
-To see debug messages, open DevTools Console on any Twitter page.
-
 ## 📝 Development Timeline
 
-### Phase 1 (✅ Complete)
-- Week 1: Project setup and basic tweet detection
-- Week 2: Thread navigation and quote tweet support
-- Week 3: Image alt text extraction and testing
+- ✅ **Phase 1** (Complete): Project setup & tweet extraction
+- ✅ **Phase 2** (Complete): Kalshi API integration & matching
+- 🔄 **Phase 3** (Current): UI integration
+- ⏳ **Phase 4** (Planned): Testing & Chrome Web Store submission
 
-### Phase 2 (🔄 Current - Estimated 2-3 weeks)
-- Kalshi API integration
-- Market matching algorithm
-- Testing and refinement
+## ⚙️ Configuration
 
-### Phase 3 (⏳ Planned - Estimated 2 weeks)
-- UI design and implementation
-- Integration testing
-- Performance optimization
+### Match Threshold
+Adjust in `src/marketMatcher.js`:
+```javascript
+const MATCHER_CONFIG = {
+  MIN_MATCH_SCORE: 0.15  // 15% minimum match (0-1 scale)
+};
+```
 
-### Phase 4 (⏳ Planned - Estimated 1 week)
-- Chrome Web Store preparation
-- Documentation finalization
-- Public release
+### Cache Duration
+Adjust in `src/contentScript.js`:
+```javascript
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+```
 
-## 🤝 Contributing
+### Market Limit
+Adjust in `src/background.js`:
+```javascript
+limit: 200  // Number of events to fetch
+```
 
-This is currently a personal development project. Contributions, issues, and feature requests are welcome once the MVP is complete.
+## 🔗 Links
+
+- **GitHub**: [nikolaisalazar/kalshi-twitter-extension](https://github.com/nikolaisalazar/kalshi-twitter-extension)
+- **Kalshi API Docs**: [docs.kalshi.com](https://docs.kalshi.com/)
+- **Chrome Extensions**: [developer.chrome.com/docs/extensions](https://developer.chrome.com/docs/extensions/)
 
 ## 📄 License
 
 TBD - License will be added before public release
 
-## 🔗 Links
-
-- [Kalshi API Documentation](https://docs.kalshi.com/)
-- [Chrome Extension Documentation](https://developer.chrome.com/docs/extensions/)
-- [Twitter/X](https://twitter.com)
-
-## ⚙️ Configuration
-
-### Permissions
-
-The extension requests the following permissions:
-- `storage`: For caching market data (future)
-- `twitter.com` and `x.com`: To run content script on Twitter
-- `api.elections.kalshi.com`: To fetch Kalshi market data
-- `pbs.twimg.com`: To access Twitter image CDN (for OCR, future)
-
-### Browser Compatibility
-
-- ✅ Google Chrome (Manifest V3)
-- ✅ Microsoft Edge (Chromium-based)
-- ❌ Firefox (Manifest V2/V3 differences - future consideration)
-- ❌ Safari (Different extension system - not planned)
-
-## 📞 Contact
-
-For questions or feedback about this project, please open an issue on GitHub.
-
 ---
 
-**Built with ❤️ for prediction market enthusiasts**
+**Phase 2 Complete** ✅ | **Built for prediction market enthusiasts** 🎯
